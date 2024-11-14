@@ -179,6 +179,45 @@ func Expr(expr bson.D) *QueryPredicate {
 	return (&QueryPredicate{}).Expr(expr)
 }
 
+func JsonSchema(schema bson.D) *QueryPredicate {
+	return (&QueryPredicate{}).JsonSchema(schema)
+}
+
+func (p *QueryPredicate) JsonSchema(schema interface{}) *QueryPredicate {
+	p.Value = append(p.Value, kv("$jsonSchema", schema))
+	return p
+}
+
+func Mod(path string, divisor, remainder int64) *QueryPredicate {
+	return (&QueryPredicate{}).Mod(path, divisor, remainder)
+}
+
+func (p *QueryPredicate) Mod(path string, divisor, remainder int64) *QueryPredicate {
+	p.Value = append(p.Value, kv(path, obj(kv("$mod", []int64{divisor, remainder}))))
+	return p
+}
+
+func Regex(path string, pattern string) *QueryPredicate {
+	return (&QueryPredicate{}).Regex(path, pattern)
+}
+
+// Regex only supports the joined pattern+options syntax (i.e.: { <field>: {
+// $regex: /pattern/<options> } }). To use the explicit $regex + $options syntax,
+// use RegexWithOptions.
+func (p *QueryPredicate) Regex(path string, pattern string) *QueryPredicate {
+	p.Value = append(p.Value, kv(path, obj(kv("$regex", pattern))))
+	return p
+}
+
+func RegexWithOptions(path string, pattern string, options string) *QueryPredicate {
+	return (&QueryPredicate{}).RegexWithOptions(path, pattern, options)
+}
+
+func (p *QueryPredicate) RegexWithOptions(path string, pattern string, options string) *QueryPredicate {
+	p.Value = append(p.Value, kv(path, obj(kv("$regex", pattern), kv("$options", options))))
+	return p
+}
+
 //endregion
 
 func All(path string, val ...any) *QueryPredicate {
