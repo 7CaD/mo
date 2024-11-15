@@ -32,8 +32,8 @@ func (p *PipelineBuilder) Skip(limit int) *PipelineBuilder {
 	return p
 }
 
-func (p *PipelineBuilder) Match(kvs ...interface{}) *PipelineBuilder {
-	p.genericAddToStage("$match", kvs)
+func (p *PipelineBuilder) Match(query *QueryPredicate) *PipelineBuilder {
+	p.stages = append(p.stages, query.Value)
 	return p
 }
 
@@ -47,9 +47,16 @@ func (p *PipelineBuilder) Unwind(path string) *PipelineBuilder {
 	return p
 }
 
-func (p *PipelineBuilder) AddFields(kvs ...interface{}) *PipelineBuilder {
-	p.genericAddToStage("$addFields", kvs)
-	return p
+type PipelineStage struct {
+	Name  string
+	Value bson.D
+}
+
+func AddFields() *PipelineStage {
+	return &PipelineStage{
+		Name:  "$addFields",
+		Value: bson.D{},
+	}
 }
 
 func (p *PipelineBuilder) Count(countKey string) *PipelineBuilder {

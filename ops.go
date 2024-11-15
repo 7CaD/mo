@@ -3,7 +3,7 @@ package mo
 import "go.mongodb.org/mongo-driver/bson"
 
 type QueryPredicate struct {
-	Value bson.D ``
+	Value bson.D
 }
 
 // region Comparison Queries
@@ -220,6 +220,8 @@ func (p *QueryPredicate) RegexWithOptions(path string, pattern string, options s
 
 //endregion
 
+// region Array Queries
+
 func All(path string, val ...any) *QueryPredicate {
 	return (&QueryPredicate{}).All(path, val...)
 }
@@ -246,3 +248,5 @@ func (p *QueryPredicate) ElemMatch(path string, query *QueryPredicate) *QueryPre
 	p.Value = append(p.Value, kv(path, obj(kv("$elemMatch", query))))
 	return p
 }
+
+// endregion
